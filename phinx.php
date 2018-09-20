@@ -23,7 +23,7 @@ return
             'port' => '3306',
             'charset' => 'utf8',
         ],
-        'testing' => [
+        'test' => [
             'adapter' => 'mysql',
             'host' => 'mysql',
             'name' => 'bp_daily_menu_test',

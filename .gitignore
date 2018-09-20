@@ -1,0 +1,12 @@
+.idea/
+vendor/
+environment/data/mysql/ibdata1
+environment/data/mysql/ib_logfile0
+environment/data/mysql/ib_logfile1
+environment/data/mysql/ibtmp1
+environment/data/mysql/ib_buffer_pool
+environment/data/mysql/bp_daily_menu/
+environment/data/mysql/bp_daily_menu_test/
+environment/logs/apache2/other_vhosts_access.log
+environment/logs/apache2/error.log
+**/.DS_Store

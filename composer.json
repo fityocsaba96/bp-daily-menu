@@ -7,5 +7,8 @@
             "BpDailyMenu\\": "src/",
             "Tests\\": "tests/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.3"
     }
 }

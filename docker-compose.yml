@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  webserver:
+    build:
+      context: ./environment/docker/webserver
+    ports:
+     - "80:80"
+     - "443:443"
+    links:
+     - mysql
+    volumes:
+     - ${DOCUMENT_ROOT-./}:/var/www/html
+     - ${PHP_INI-./environment/config/php/php.ini}:/usr/local/etc/php/php.ini
+     - ${VHOSTS_DIR-./environment/config/vhosts}:/etc/apache2/sites-enabled
+     - ${APACHE_LOG_DIR-./environment/logs/apache2}:/var/log/apache2
+    environment:
+     - APPLICATION_ENV=development
+  mysql:
+    build: ./environment/docker/mysql
+    volumes:
+     - ${MYSQL_DATA_DIR-./environment/data/mysql}:/var/lib/mysql
+     - ${MYSQL_LOG_DIR-./environment/logs/mysql}:/var/log/mysql
+  test:
+    build:
+      dockerfile: "Dockerfile.test"
+      context: ./environment/docker/webserver
+    links:
+     - mysql
+    volumes:
+     - ${DOCUMENT_ROOT-./}:/var/www/html
+     - ${PHP_INI-./environment/config/php/php.ini}:/usr/local/etc/php/php.ini
+     - ${VHOSTS_DIR-./environment/config/vhosts}:/etc/apache2/sites-enabled
+     - ${APACHE_LOG_DIR-./environment/logs/apache2}:/var/log/apache2
+    environment:
+     - APPLICATION_ENV=test

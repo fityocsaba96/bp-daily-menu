@@ -43,4 +43,21 @@ class WebTestCaseTest extends TestCase {
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('', (string) $response->getBody());
     }
+
+    /**
+     * @test
+     */
+    public function runApp_givenQueryString_canHandleQueryParams() {
+        $app = new App();
+        $app->post('/test', function(Request $request, Response $response) {
+            $body = $request->getQueryParam('sad');
+            $response->write($body);
+        });
+        $response = $this->runApp($app, 'POST', '/test', [], 'sad=gfh');
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('gfh', (string) $response->getBody());
+        $response = $this->runApp($app, 'POST', '/test', []);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('', (string) $response->getBody());
+    }
 }

@@ -30,7 +30,27 @@ class KajahuDaoTest extends TestCase {
     /**
      * @test
      */
-    public function getDailyMenu_noMenuForToday_returnsEmptyArray() {
-        $this->assertEquals([], self::$dao->getDailyMenu());
+    public function getDailyMenu_noMenuForToday_returnsFalse() {
+        $this->assertFalse(self::$dao->getDailyMenu());
+    }
+
+    /**
+     * @test
+     */
+    public function getDailyMenu_thereIsMenuForToday_returnsMenu() {
+        $menu = [
+            'date' => date('Y-m-d'),
+            'price' => 1000,
+            'soup' => 'Test soup',
+            'dish' => 'Test dish',
+            'dessert' => 'Test dessert'
+        ];
+        $this->saveDailyMenu($menu);
+        $this->assertEquals($menu, self::$dao->getDailyMenu());
+    }
+
+    private function saveDailyMenu($menu): void {
+        $statement = self::$pdo->prepare("INSERT INTO kajahu (date, price, soup, dish, dessert) VALUES (:date, :price, :soup, :dish, :dessert)");
+        $statement->execute($menu);
     }
 }

@@ -4,6 +4,7 @@ namespace BpDailyMenu;
 
 use BpDailyMenu\Action\HealthCheckAction;
 use BpDailyMenu\Dao\HealthCheckDao;
+use BpDailyMenu\Dao\RestaurantDao;
 use PDO;
 use Psr\Container\ContainerInterface;
 use Slim\App;
@@ -45,6 +46,10 @@ class AppBuilder {
     private function setupDaos(): void {
         $this->container[HealthCheckDao::class] = function ($container) {
             return new HealthCheckDao($container[PDO::class]);
+        };
+
+        $this->container[RestaurantDao::class] = function ($container) {
+            return new RestaurantDao($container[PDO::class]);
         };
     }
 

@@ -16,6 +16,7 @@ class RestaurantDao {
     }
 
     public function list(): array {
-        return [];
+        $sql = 'SELECT table_name, name, menu_url, map_url FROM restaurant';
+        return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 }

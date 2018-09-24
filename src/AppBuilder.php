@@ -3,6 +3,7 @@
 namespace BpDailyMenu;
 
 use BpDailyMenu\Action\HealthCheckAction;
+use BpDailyMenu\Dao\BonnieDao;
 use BpDailyMenu\Dao\HealthCheckDao;
 use BpDailyMenu\Dao\KajahuDao;
 use BpDailyMenu\Dao\RestaurantDao;
@@ -55,6 +56,10 @@ class AppBuilder {
 
         $this->container[KajahuDao::class] = function ($container) {
             return new KajahuDao($container[PDO::class]);
+        };
+
+        $this->container[BonnieDao::class] = function ($container) {
+            return new BonnieDao($container[PDO::class]);
         };
     }
 

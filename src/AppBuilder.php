@@ -3,6 +3,7 @@
 namespace BpDailyMenu;
 
 use BpDailyMenu\Action\HealthCheckAction;
+use BpDailyMenu\Action\TodaysMenuAction;
 use BpDailyMenu\Dao\BonnieDao;
 use BpDailyMenu\Dao\HealthCheckDao;
 use BpDailyMenu\Dao\KajahuDao;
@@ -75,6 +76,7 @@ class AppBuilder {
 
     private function setupRoutes(): void {
         $this->app->get('/healthcheck', HealthCheckAction::class);
+        $this->app->get('/menu/today', TodaysMenuAction::class);
     }
 
     private function setupTwig(): void {
@@ -90,6 +92,11 @@ class AppBuilder {
     private function setupDependencies(): void {
         $this->container[HealthCheckAction::class] = function ($container) {
             return new HealthCheckAction($container[HealthCheckDao::class], $container[Twig::class]);
+        };
+
+        $this->container[TodaysMenuAction::class] = function ($container) {
+            return new TodaysMenuAction($container[RestaurantDao::class], $container[KajahuDao::class], $container[BonnieDao::class],
+                                        $container[MuzikumDao::class], $container[VendiakDao::class], $container[Twig::class]);
         };
     }
 }

@@ -2,6 +2,9 @@
 
 namespace BpDailyMenu;
 
+use BpDailyMenu\Action\HealthCheckAction;
+use BpDailyMenu\Dao\HealthCheckDao;
+use PDO;
 use Psr\Container\ContainerInterface;
 use Slim\App;
 use Slim\Views\Twig;
@@ -22,6 +25,14 @@ class AppBuilder {
         (new EnvLoader)();
         $this->app = new App();
         $this->container = $this->app->getContainer();
+
+        $this->container[PDO::class] = (new PDOFactory)->createWithDBName();
+        $this->container[HealthCheckDao::class] = new HealthCheckDao($this->container[PDO::class]);
+        $this->app->get('/healthcheck', HealthCheckAction::class);
+        $this->container[HealthCheckAction::class] = function ($container) {
+            return new HealthCheckAction($container[HealthCheckDao::class], $container[Twig::class]);
+        };
+
         $this->setupTwig();
 
         return $this->app;

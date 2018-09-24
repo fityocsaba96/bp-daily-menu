@@ -51,7 +51,12 @@ class TodaysMenuAction {
 
     public function __invoke(Request $request, Response $response): ResponseInterface {
         return $this->view->render($response, 'daily_menu.html.twig', [
-            'restaurants' => $this->restaurantDao->list()
+            'date' => date('Y-m-d'),
+            'restaurants' => $this->restaurantDao->list(),
+            'kajahuMenu' => $this->kajahuDao->getDailyMenu(),
+            'bonnieMenu' => $this->bonnieDao->getDailyMenu(),
+            'muzikumMenu' => $this->muzikumDao->getDailyMenu(),
+            'vendiakMenu' => $this->vendiakDao->getDailyMenu()
         ]);
     }
 }

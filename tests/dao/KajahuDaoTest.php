@@ -4,6 +4,7 @@ namespace Tests\Dao;
 
 use BpDailyMenu\Dao\KajahuDao;
 use BpDailyMenu\PDOFactory;
+use DateTime;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
@@ -52,5 +53,20 @@ class KajahuDaoTest extends TestCase {
     private function saveDailyMenu($menu): void {
         $statement = self::$pdo->prepare("INSERT INTO kajahu (date, price, soup, dish, dessert) VALUES (:date, :price, :soup, :dish, :dessert)");
         $statement->execute($menu);
+    }
+
+    /**
+     * @test
+     */
+    public function getDailyMenu_thereIsMenuButNotForToday_returnsFalse() {
+        $menu = [
+            'date' => (new DateTime('yesterday'))->format('Y-m-d'),
+            'price' => 1000,
+            'soup' => 'Test soup',
+            'dish' => 'Test dish',
+            'dessert' => 'Test dessert'
+        ];
+        $this->saveDailyMenu($menu);
+        $this->assertFalse(self::$dao->getDailyMenu());
     }
 }

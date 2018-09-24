@@ -23,4 +23,24 @@ class WebTestCaseTest extends TestCase {
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('Ok', (string) $response->getBody());
     }
+
+    /**
+     * @test
+     */
+    public function runApp_givenRequestBody_canHandleRequestBody() {
+        $app = new App();
+        $app->post('/test', function(Request $request, Response $response) {
+            $body = $request->getParsedBody();
+            $response->write($body['message']);
+        });
+        $requestData = [
+            'message' => 'text'
+        ];
+        $response = $this->runApp($app, 'POST', '/test', $requestData);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('text', (string) $response->getBody());
+        $response = $this->runApp($app, 'POST', '/test');
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('', (string) $response->getBody());
+    }
 }

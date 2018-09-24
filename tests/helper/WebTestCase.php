@@ -10,12 +10,15 @@ use Slim\Http\Response;
 
 trait WebTestCase {
 
-    private function runApp(App $app, string $method, string $endpoint): ResponseInterface {
+    private function runApp(App $app, string $method, string $endpoint, array $data = null): ResponseInterface {
         $environment = Environment::mock([
             'REQUEST_METHOD' => $method,
             'REQUEST_URI' => $endpoint
         ]);
         $request = Request::createFromEnvironment($environment);
+        if ($data) {
+            $request = $request->withParsedBody($data);
+        }
         return $app($request, new Response());
     }
 }

@@ -26,16 +26,28 @@ class AppBuilder {
         $this->app = new App();
         $this->container = $this->app->getContainer();
 
-        $this->container[PDO::class] = (new PDOFactory)->createWithDBName();
-        $this->container[HealthCheckDao::class] = new HealthCheckDao($this->container[PDO::class]);
-        $this->app->get('/healthcheck', HealthCheckAction::class);
-        $this->container[HealthCheckAction::class] = function ($container) {
-            return new HealthCheckAction($container[HealthCheckDao::class], $container[Twig::class]);
-        };
-
-        $this->setupTwig();
-
+        $this->setup();
         return $this->app;
+    }
+
+    private function setup(): void {
+        $this->setupPDO();
+        $this->setupDaos();
+        $this->setupRoutes();
+        $this->setupTwig();
+        $this->setupDependencies();
+    }
+
+    private function setupPDO(): void {
+        $this->container[PDO::class] = (new PDOFactory)->createWithDBName();
+    }
+
+    private function setupDaos(): void {
+        $this->container[HealthCheckDao::class] = new HealthCheckDao($this->container[PDO::class]);
+    }
+
+    private function setupRoutes(): void {
+        $this->app->get('/healthcheck', HealthCheckAction::class);
     }
 
     private function setupTwig(): void {
@@ -45,6 +57,12 @@ class AppBuilder {
                 $container->get('request')->getUri()->getBasePath()), '/');
             $view->addExtension(new TwigExtension($container->get('router'), $basePath));
             return $view;
+        };
+    }
+
+    private function setupDependencies(): void {
+        $this->container[HealthCheckAction::class] = function ($container) {
+            return new HealthCheckAction($container[HealthCheckDao::class], $container[Twig::class]);
         };
     }
 }

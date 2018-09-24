@@ -6,6 +6,7 @@ use BpDailyMenu\Action\HealthCheckAction;
 use BpDailyMenu\Dao\BonnieDao;
 use BpDailyMenu\Dao\HealthCheckDao;
 use BpDailyMenu\Dao\KajahuDao;
+use BpDailyMenu\Dao\MuzikumDao;
 use BpDailyMenu\Dao\RestaurantDao;
 use PDO;
 use Psr\Container\ContainerInterface;
@@ -60,6 +61,10 @@ class AppBuilder {
 
         $this->container[BonnieDao::class] = function ($container) {
             return new BonnieDao($container[PDO::class]);
+        };
+
+        $this->container[MuzikumDao::class] = function ($container) {
+            return new MuzikumDao($container[PDO::class]);
         };
     }
 

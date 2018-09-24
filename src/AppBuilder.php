@@ -43,7 +43,9 @@ class AppBuilder {
     }
 
     private function setupDaos(): void {
-        $this->container[HealthCheckDao::class] = new HealthCheckDao($this->container[PDO::class]);
+        $this->container[HealthCheckDao::class] = function ($container) {
+            return new HealthCheckDao($container[PDO::class]);
+        };
     }
 
     private function setupRoutes(): void {

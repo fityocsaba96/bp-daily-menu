@@ -18,4 +18,13 @@ class HealthCheckActionTest extends TestCase {
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertContains('App OK', (string) $response->getBody());
     }
+
+    /**
+     * @test
+     */
+    public function invoke_containsDBOk() {
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/healthcheck');
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertContains('DB OK', (string) $response->getBody());
+    }
 }

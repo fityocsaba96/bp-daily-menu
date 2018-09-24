@@ -25,6 +25,8 @@ class HealthCheckAction {
     }
 
     public function __invoke(Request $request, Response $response): ResponseInterface {
-        return $this->view->render($response, 'healthcheck.html.twig');
+        return $this->view->render($response, 'healthcheck.html.twig', [
+            'dbOK' => $this->dao->getDatabaseName() !== null
+        ]);
     }
 }

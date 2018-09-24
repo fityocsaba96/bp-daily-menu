@@ -18,4 +18,15 @@ class PDOFactoryTest extends TestCase {
         $this->assertInstanceOf(PDO::class, $pdo);
         $this->assertNull($database);
     }
+
+    /**
+     * @test
+     */
+    public function createWithDBName_returnsPDOBasedOnEnvVar() {
+        $pdoFactory = new PDOFactory();
+        $pdo = $pdoFactory->createWithDBName();
+        $database = $pdo->query('SELECT DATABASE()')->fetchColumn();
+        $this->assertInstanceOf(PDO::class, $pdo);
+        $this->assertEquals('bp_daily_menu_test', $database);
+    }
 }

@@ -15,4 +15,12 @@ class AppBuilderTest extends TestCase {
         $app = (new AppBuilder)();
         $this->assertInstanceOf(App::class, $app);
     }
+
+    /**
+     * @test
+     */
+    public function invoke_loadsEnvVars() {
+        $app = (new AppBuilder)();
+        $this->assertNotFalse(getenv('DB_NAME'));
+    }
 }

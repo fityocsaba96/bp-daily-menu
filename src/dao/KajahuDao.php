@@ -4,7 +4,7 @@ namespace BpDailyMenu\Dao;
 
 use PDO;
 
-class KajahuDao {
+class KajahuDao implements Restaurant {
 
     /**
      * @var PDO

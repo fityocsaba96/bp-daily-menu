@@ -4,7 +4,7 @@ namespace BpDailyMenu\Dao;
 
 use PDO;
 
-class BonnieDao {
+class BonnieDao implements Restaurant {
 
     /**
      * @var PDO

@@ -49,13 +49,7 @@ class TodaysMenuActionTest extends TestCase {
         self::$bonnieDao = new BonnieDao(self::$pdo);
         self::$muzikumDao = new MuzikumDao(self::$pdo);
         self::$vendiakDao = new VendiakDao(self::$pdo);
-    }
 
-    protected function setUp(): void {
-        self::$pdo->query('TRUNCATE TABLE kajahu');
-        self::$pdo->query('TRUNCATE TABLE bonnie');
-        self::$pdo->query('TRUNCATE TABLE muzikum');
-        self::$pdo->query('TRUNCATE TABLE vendiak');
         self::$pdo->query('TRUNCATE TABLE restaurant');
         $restaurants = [
             [
@@ -83,10 +77,17 @@ class TodaysMenuActionTest extends TestCase {
                 'map_url' => 'https://goo.gl/maps/qqNxAny89rN2'
             ]
         ];
-        $this->saveRestaurants($restaurants);
+        self::saveRestaurants($restaurants);
     }
 
-    private function saveRestaurants($restaurants): void {
+    protected function setUp(): void {
+        self::$pdo->query('TRUNCATE TABLE kajahu');
+        self::$pdo->query('TRUNCATE TABLE bonnie');
+        self::$pdo->query('TRUNCATE TABLE muzikum');
+        self::$pdo->query('TRUNCATE TABLE vendiak');
+    }
+
+    private static function saveRestaurants($restaurants): void {
         foreach ($restaurants as $restaurant) {
             $statement = self::$pdo->prepare("INSERT INTO restaurant (table_name, name, menu_url, map_url) VALUES (:table_name, :name, :menu_url, :map_url)");
             $statement->execute($restaurant);
@@ -104,6 +105,19 @@ class TodaysMenuActionTest extends TestCase {
         foreach ($restaurants as $restaurant) {
             $this->assertContains($restaurant['name'], (string) $response->getBody());
             $this->assertContains($restaurant['map_url'], (string) $response->getBody());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function invoke_noMenuForToday_containsNoticeForEveryRestaurant() {
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/today');
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $restaurants = self::$restaurantDao->list();
+        foreach ($restaurants as $restaurant) {
+            $this->assertContains('No menu found for ' . $restaurant['name'], (string) $response->getBody());
         }
     }
 }

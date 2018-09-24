@@ -1,12 +1,30 @@
 <?php
 
-$dsn = 'mysql:host=mysql;charset=utf8mb4';
-$pdo = new PDO($dsn, 'academy', 'academy');
-$pdo->query('CREATE DATABASE IF NOT EXISTS bp_daily_menu');
-$pdo->query('CREATE DATABASE IF NOT EXISTS bp_daily_menu_test');
+use BpDailyMenu\EnvLoader;
+use BpDailyMenu\PDOFactory;
 
-return
-[
+(new EnvLoader)();
+
+function loadConfig(string $env): array {
+    (new EnvLoader)($env);
+    $pdo = (new PDOFactory)->createWithoutDbName();
+    $pdo->query('CREATE DATABASE IF NOT EXISTS ' . getenv('DB_NAME'));
+    $config = [
+        'adapter' => 'mysql',
+        'host' => getenv('DB_HOST'),
+        'name' => getenv('DB_NAME'),
+        'user' => getenv('DB_USER'),
+        'pass' => getenv('DB_PASS'),
+        'port' => '3306',
+        'charset' => 'utf8',
+    ];
+    return $config;
+}
+
+$developmentConfig = loadConfig('development');
+$testConfig = loadConfig('test');
+
+return [
     'paths' => [
         'migrations' => '%%PHINX_CONFIG_DIR%%/db/migrations',
         'seeds' => '%%PHINX_CONFIG_DIR%%/db/seeds'
@@ -14,24 +32,8 @@ return
     'environments' => [
         'default_migration_table' => 'phinxlog',
         'default_database' => 'development',
-        'development' => [
-            'adapter' => 'mysql',
-            'host' => 'mysql',
-            'name' => 'bp_daily_menu',
-            'user' => 'academy',
-            'pass' => 'academy',
-            'port' => '3306',
-            'charset' => 'utf8',
-        ],
-        'test' => [
-            'adapter' => 'mysql',
-            'host' => 'mysql',
-            'name' => 'bp_daily_menu_test',
-            'user' => 'academy',
-            'pass' => 'academy',
-            'port' => '3306',
-            'charset' => 'utf8',
-        ]
+        'development' => $developmentConfig,
+        'test' => $testConfig
     ],
     'version_order' => 'creation'
 ];

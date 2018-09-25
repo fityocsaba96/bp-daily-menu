@@ -58,6 +58,28 @@ class DailyMenuDaoTest extends TestCase {
         $this->assertEquals($menus, self::$dao->getDailyMenu());
     }
 
+    /**
+     * @test
+     */
+    public function getDailyMenu_thereIsMenuForTodayAndAnotherDay_returnsMenuForToday() {
+        $menus = [
+            [
+                'date' => date('Y-m-d'),
+                'price' => 1000,
+                'menu' => 'Test menu',
+                'restaurant' => 'bonnie'
+            ],
+            [
+                'date' => (new DateTime('tomorrow'))->format('Y-m-d'),
+                'price' => 1100,
+                'menu' => 'Test menu 2',
+                'restaurant' => 'vendiak'
+            ],
+        ];
+        $this->saveDailyMenus($menus);
+        $this->assertEquals([$menus[0]], self::$dao->getDailyMenu());
+    }
+
     private function saveDailyMenus($menus): void {
         foreach ($menus as $menu) {
             $statement = self::$pdo->prepare("INSERT INTO daily_menu (date, price, menu, restaurant) VALUES (:date, :price, :menu, :restaurant)");

@@ -16,6 +16,9 @@ class DailyMenuDao {
     }
 
     public function getDailyMenu() {
-        return false;
+        $sql = 'SELECT restaurant, date, price, menu FROM daily_menu';
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute();
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 }

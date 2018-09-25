@@ -4,12 +4,8 @@ namespace BpDailyMenu;
 
 use BpDailyMenu\Action\HealthCheckAction;
 use BpDailyMenu\Action\TodaysMenuAction;
-use BpDailyMenu\Dao\BonnieDao;
+use BpDailyMenu\Dao\DailyMenuDao;
 use BpDailyMenu\Dao\HealthCheckDao;
-use BpDailyMenu\Dao\KajahuDao;
-use BpDailyMenu\Dao\MuzikumDao;
-use BpDailyMenu\Dao\RestaurantDao;
-use BpDailyMenu\Dao\VendiakDao;
 use PDO;
 use Psr\Container\ContainerInterface;
 use Slim\App;
@@ -53,24 +49,8 @@ class AppBuilder {
             return new HealthCheckDao($container[PDO::class]);
         };
 
-        $this->container[RestaurantDao::class] = function ($container) {
-            return new RestaurantDao($container[PDO::class]);
-        };
-
-        $this->container[KajahuDao::class] = function ($container) {
-            return new KajahuDao($container[PDO::class]);
-        };
-
-        $this->container[BonnieDao::class] = function ($container) {
-            return new BonnieDao($container[PDO::class]);
-        };
-
-        $this->container[MuzikumDao::class] = function ($container) {
-            return new MuzikumDao($container[PDO::class]);
-        };
-
-        $this->container[VendiakDao::class] = function ($container) {
-            return new VendiakDao($container[PDO::class]);
+        $this->container[DailyMenuDao::class] = function ($container) {
+            return new DailyMenuDao($container[PDO::class]);
         };
     }
 
@@ -95,8 +75,7 @@ class AppBuilder {
         };
 
         $this->container[TodaysMenuAction::class] = function ($container) {
-            return new TodaysMenuAction($container[RestaurantDao::class], $container[KajahuDao::class], $container[BonnieDao::class],
-                                        $container[MuzikumDao::class], $container[VendiakDao::class], $container[Twig::class]);
+            return new TodaysMenuAction($container[DailyMenuDao::class], $container[Twig::class]);
         };
     }
 }

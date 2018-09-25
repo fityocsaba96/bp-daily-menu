@@ -1,6 +1,6 @@
 <h1>Budapest daily menu</h1>
 <h2>{{ date }}</h2>
-{% for restaurant in restaurants %}
+<!--{% for restaurant in restaurants %}
     {% if restaurant.table_name == 'kajahu' %}
         <a href="{{ restaurant.map_url }}">
             <h3>{{ restaurant.name }}</h3>
@@ -15,45 +15,5 @@
         {% else %}
             <p>No menu found for {{ restaurant.name }}</p>
         {% endif %}
-    {% elseif restaurant.table_name == 'bonnie' %}
-        <a href="{{ restaurant.map_url }}">
-            <h3>{{ restaurant.name }}</h3>
-        </a>
-        {% if bonnieMenu %}
-            <p>
-                Price: {{ bonnieMenu.price }}<br>
-                Soup: {{ bonnieMenu.soup }}<br>
-                Dish: {{ bonnieMenu.dish }}
-            </p>
-        {% else %}
-            <p>No menu found for {{ restaurant.name }}</p>
-        {% endif %}
-    {% elseif restaurant.table_name == 'muzikum' %}
-        <a href="{{ restaurant.map_url }}">
-            <h3>{{ restaurant.name }}</h3>
-        </a>
-        {% if muzikumMenu %}
-            <p>
-                Price: {{ muzikumMenu.price }}<br>
-                Soup: {{ muzikumMenu.soup }}<br>
-                Dish: {{ muzikumMenu.dish }}
-            </p>
-        {% else %}
-            <p>No menu found for {{ restaurant.name }}</p>
-        {% endif %}
-    {% elseif restaurant.table_name == 'vendiak' %}
-        <a href="{{ restaurant.map_url }}">
-            <h3>{{ restaurant.name }}</h3>
-        </a>
-        {% if vendiakMenu %}
-            <p>
-                Price: {{ vendiakMenu.price }}<br>
-                Soup: {{ vendiakMenu.soup }}<br>
-                Dish: {{ vendiakMenu.dish }}<br>
-                Drink: {{ vendiakMenu.drink }}
-            </p>
-        {% else %}
-            <p>No menu found for {{ restaurant.name }}</p>
-        {% endif %}
     {% endif %}
-{% endfor %}
+{% endfor %}-->

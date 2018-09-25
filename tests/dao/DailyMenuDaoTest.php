@@ -79,6 +79,17 @@ class DailyMenuDaoTest extends TestCase {
         $this->assertEquals($menus, self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
     }
 
+    /**
+     * @test
+     */
+    public function getMenusBetweenInterval_thereAreMenusInIntervalAndNotInInterval_returnsArrayContainingTheMenusInInterval() {
+        $menusInInterval = $this->createMenusFromDates(['2018-01-12', '2018-01-13']);
+        $this->saveDailyMenus($menusInInterval);
+        $menusNotInInterval = $this->createMenusFromDates(['2019-01-12', '2019-01-13']);
+        $this->saveDailyMenus($menusNotInInterval);
+        $this->assertEquals($menusInInterval, self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
+    }
+
     private function saveDailyMenus($menus): void {
         foreach ($menus as $menu) {
             $statement = self::$pdo->prepare("INSERT INTO daily_menu (date, price, menu, restaurant) VALUES (:date, :price, :menu, :restaurant)");

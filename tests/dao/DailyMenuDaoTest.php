@@ -80,24 +80,55 @@ class DailyMenuDaoTest extends TestCase {
         $this->assertEquals([$menus[0]], self::$dao->getDailyMenu());
     }
 
+    /**
+     * @test
+     */
+    public function getMenusBetweenInterval_NoMenusInInterval_returnsEmptyArray() {
+        $this->assertEmpty(self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
+    }
+
+    /**
+     * @test
+     */
+    public function getMenusBetweenInterval_thereIsMenuInInterval_returnsArrayContainingTheMenu() {
+        $menus = [
+            [
+                'date' => '2018-01-12',
+                'price' => 1000,
+                'menu' => 'Test menu',
+                'restaurant' => 'bonnie'
+            ]
+        ];
+        $this->saveDailyMenus($menus);
+        $this->assertEquals($menus, self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
+    }
+
+    /**
+     * @test
+     */
+    public function getMenusBetweenInterval_thereAreMenusInInterval_returnsArrayContainingTheMenus() {
+        $menus = [
+            [
+                'date' => '2018-01-12',
+                'price' => 1000,
+                'menu' => 'Test menu',
+                'restaurant' => 'bonnie'
+            ],
+            [
+                'date' => '2018-01-13',
+                'price' => 1100,
+                'menu' => 'Test menu 2',
+                'restaurant' => 'vendiak'
+            ],
+        ];
+        $this->saveDailyMenus($menus);
+        $this->assertEquals($menus, self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
+    }
+
     private function saveDailyMenus($menus): void {
         foreach ($menus as $menu) {
             $statement = self::$pdo->prepare("INSERT INTO daily_menu (date, price, menu, restaurant) VALUES (:date, :price, :menu, :restaurant)");
             $statement->execute($menu);
         }
     }
-
-//    /**
-//     * @test
-//     */
-//    public function getDailyMenu_thereIsMenuButNotForToday_returnsFalse() {
-//        $menu = [
-//            'date' => (new DateTime('yesterday'))->format('Y-m-d'),
-//            'price' => 1000,
-//            'soup' => 'Test soup',
-//            'dish' => 'Test dish'
-//        ];
-//        $this->saveDailyMenu($menu);
-//        $this->assertFalse(self::$dao->getDailyMenu());
-//    }
 }

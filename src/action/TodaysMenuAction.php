@@ -3,6 +3,7 @@
 namespace BpDailyMenu\Action;
 
 use BpDailyMenu\Dao\DailyMenuDao;
+use BpDailyMenu\RestaurantCatalog;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -27,8 +28,8 @@ class TodaysMenuAction {
     public function __invoke(Request $request, Response $response): ResponseInterface {
         return $this->view->render($response, 'daily_menu.html.twig', [
             'date' => date('Y-m-d'),
-            'restaurants' => [],
-            'menu' => $this->dao->getDailyMenu()
+            'restaurants' => RestaurantCatalog::getAll(),
+            'menus' => $this->dao->getDailyMenu()
         ]);
     }
 }

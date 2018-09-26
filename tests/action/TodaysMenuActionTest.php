@@ -5,6 +5,7 @@ namespace Tests\Action;
 use BpDailyMenu\AppBuilder;
 use BpDailyMenu\Dao\DailyMenuDao;
 use BpDailyMenu\PDOFactory;
+use BpDailyMenu\RestaurantCatalog;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Tests\Helper\WebTestCase;
@@ -40,32 +41,19 @@ class TodaysMenuActionTest extends TestCase {
         $this->assertContains(date('Y-m-d'), (string) $response->getBody());
     }
 
-//    /**
-//     * @test
-//     */
-//    public function invoke_containsRestaurantNamesAndMaps() {
-//        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/today');
-//        $this->assertEquals(200, $response->getStatusCode());
-//
-//        $restaurants = self::$restaurantDao->list();
-//        foreach ($restaurants as $restaurant) {
-//            $this->assertContains($restaurant['name'], (string) $response->getBody());
-//            $this->assertContains($restaurant['map_url'], (string) $response->getBody());
-//        }
-//    }
+    /**
+     * @test
+     */
+    public function invoke_noMenuForTodayForAllRestaurants_notContainsRestaurantsData() {
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/today');
+        $this->assertEquals(200, $response->getStatusCode());
 
-//    /**
-//     * @test
-//     */
-//    public function invoke_noMenuForTodayForAllRestaurants_containsNoticeForEveryRestaurant() {
-//        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/today');
-//        $this->assertEquals(200, $response->getStatusCode());
-//
-//        $restaurants = self::$restaurantDao->list();
-//        foreach ($restaurants as $restaurant) {
-//            $this->assertContains('No menu found for ' . $restaurant['name'], (string) $response->getBody());
-//        }
-//    }
+        $restaurants = RestaurantCatalog::getAll();
+        foreach ($restaurants as $restaurant) {
+            $this->assertNotContains($restaurant['name'], (string) $response->getBody());
+            $this->assertNotContains($restaurant['map_url'], (string) $response->getBody());
+        }
+    }
 
 //    /**
 //     * @test

@@ -29,7 +29,14 @@ class TodaysMenuAction {
         return $this->view->render($response, 'daily_menu.html.twig', [
             'date' => date('Y-m-d'),
             'restaurants' => RestaurantCatalog::getAll(),
-            'menus' => $this->dao->getDailyMenu()
+            'menus' => $this->explodeMenusByNewLine($this->dao->getDailyMenu())
         ]);
+    }
+
+    private function explodeMenusByNewLine(array $menus): array {
+        foreach ($menus as &$menu) {
+            $menu['menu'] = explode("\n", $menu['menu']);
+        }
+        return $menus;
     }
 }

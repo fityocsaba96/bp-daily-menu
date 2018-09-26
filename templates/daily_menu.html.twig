@@ -6,6 +6,8 @@
     </a>
     <p>
         <strong>{{ menu.price }} Ft</strong><br>
-        {{ menu.menu }}
+        {% for menu_item in menu.menu %}
+            {{ menu_item }}<br>
+        {% endfor %}
     </p>
 {% endfor %}

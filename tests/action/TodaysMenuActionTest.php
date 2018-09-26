@@ -9,7 +9,6 @@ use BpDailyMenu\RestaurantCatalog;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Response;
 use Tests\Helper\WebTestCase;
 
 class TodaysMenuActionTest extends TestCase {

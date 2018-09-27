@@ -26,17 +26,20 @@ class TodaysMenuAction {
     }
 
     public function __invoke(Request $request, Response $response): ResponseInterface {
+        $date = date('Y-m-d');
         return $this->view->render($response, 'daily_menu.html.twig', [
-            'date' => date('Y-m-d'),
+            'date' => $date,
             'restaurants' => RestaurantCatalog::getAll(),
-            'menus' => $this->explodeMenusByNewLine($this->dao->getDailyMenu())
+            'intervalMenus' => $this->explodeMenusByNewLine($this->dao->getDailyMenu())
         ]);
     }
 
-    private function explodeMenusByNewLine(array $menus): array {
-        foreach ($menus as &$menu) {
-            $menu['menu'] = explode("\n", $menu['menu']);
+    private function explodeMenusByNewLine(array $intervalMenus): array {
+        foreach ($intervalMenus as &$date) {
+            foreach ($date as &$menu) {
+                $menu['menu'] = explode("\n", $menu['menu']);
+            }
         }
-        return $menus;
+        return $intervalMenus;
     }
 }

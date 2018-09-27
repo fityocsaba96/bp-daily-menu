@@ -21,9 +21,9 @@ class DailyMenuDao {
     }
 
     public function getMenusBetweenInterval(string $fromDate, string $toDate) {
-        $sql = 'SELECT restaurant, date, price, menu FROM daily_menu WHERE date BETWEEN :fromDate AND :toDate';
+        $sql = 'SELECT date, restaurant, price, menu FROM daily_menu WHERE date BETWEEN :fromDate AND :toDate';
         $statement = $this->pdo->prepare($sql);
         $statement->execute(['fromDate' => $fromDate, 'toDate' => $toDate]);
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $statement->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
     }
 }

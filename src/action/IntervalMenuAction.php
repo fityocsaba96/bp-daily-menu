@@ -3,9 +3,7 @@
 namespace BpDailyMenu\Action;
 
 use BpDailyMenu\Dao\DailyMenuDao;
-use DateInterval;
-use DatePeriod;
-use DateTime;
+use BpDailyMenu\RestaurantCatalog;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -29,30 +27,19 @@ class IntervalMenuAction {
 
     public function __invoke(Request $request, Response $response): ResponseInterface {
         list($from, $to) = array($request->getQueryParam('from'), $request->getQueryParam('to'));
+
         return $this->view->render($response, 'interval_menu.html.twig', [
-            'intervalMenu' => $this->generateIntervalMenu($from, $to)
+            'restaurants' => RestaurantCatalog::getAll(),
+            'menus_of_interval' => $this->explodeMenusByNewLine($this->dao->getMenusBetweenInterval($from, $to))
         ]);
     }
 
-    private function generateIntervalMenu(string $from, string $to): array {
-        $intervalMenu = [];
-        $interval = $this->generateInterval($from, $to);
-        foreach ($interval as $date) {
-            $intervalMenu[] = $this->generateMenu($date);
+    private function explodeMenusByNewLine(array $menusOfInterval): array {
+        foreach ($menusOfInterval as &$menus) {
+            foreach ($menus as &$menu) {
+                $menu['menu'] = explode("\n", $menu['menu']);
+            }
         }
-        return $intervalMenu;
-    }
-
-    private function generateInterval(string $from, string $to): DatePeriod {
-        $fromDate = new DateTime($from);
-        $toDate = new DateTime($to);
-        $toDate->modify('+1 day');
-        return new DatePeriod($fromDate, new DateInterval('P1D'), $toDate);
-    }
-
-    private function generateMenu(DateTime $date): array {
-        return [
-            'date' => $date->format('Y-m-d')
-        ];
+        return $menusOfInterval;
     }
 }

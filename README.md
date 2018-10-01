@@ -1,0 +1,1 @@
+[ ![Codeship Status for fityocsaba96/bp-daily-menu](https://app.codeship.com/projects/58f42c30-a781-0136-5888-6a2212056720/status?branch=master)](https://app.codeship.com/projects/308237)

@@ -10,7 +10,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 use Slim\Views\Twig;
 
-class IntervalMenuAction {
+class MenuAction {
 
     /**
      * @var DailyMenuDao
@@ -47,7 +47,7 @@ class IntervalMenuAction {
     }
 
     private function renderMenus(Response $response, array $menus, bool $fillForm): ResponseInterface {
-        return $this->view->render($response, 'interval_menu.html.twig', [
+        return $this->view->render($response, 'menu.html.twig', [
             'restaurants' => RestaurantCatalog::getAll(),
             'menus_of_interval' => $this->explodeMenusByNewLine($menus),
             'fill_form' => $fillForm

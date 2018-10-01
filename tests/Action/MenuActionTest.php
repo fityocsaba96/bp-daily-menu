@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Tests\Helper\WebTestCase;
 
-class IntervalMenuActionTest extends TestCase {
+class MenuActionTest extends TestCase {
 
     use WebTestCase;
 
@@ -43,7 +43,7 @@ class IntervalMenuActionTest extends TestCase {
     public function invoke_noMenuForGivenIntervalForAllRestaurants_notContainsRestaurantsData() {
         list($from, $to) = array('2018-02-01', '2018-02-10');
 
-        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval', null, "from=$from&to=$to");
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu', null, "from=$from&to=$to");
         $this->assertEquals(200, $response->getStatusCode());
 
         $restaurants = RestaurantCatalog::getAll();
@@ -65,7 +65,7 @@ class IntervalMenuActionTest extends TestCase {
             $intervalMenus[] = $menus;
         }
 
-        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval',null, "from=$from&to=$to");
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu',null, "from=$from&to=$to");
         $this->assertEquals(200, $response->getStatusCode());
 
         $this->responseContainsRestaurantData($response, $restaurants);
@@ -88,7 +88,7 @@ class IntervalMenuActionTest extends TestCase {
         $menu = $this->createMenu($from, 1000, 'Test menu', array_keys($oneRestaurant)[0]);
         $this->insertMenus([$menu]);
 
-        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval',null, "from=$from&to=$to");
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu',null, "from=$from&to=$to");
         $this->assertEquals(200, $response->getStatusCode());
 
         $this->assertContains($from, (string) $response->getBody());
@@ -112,7 +112,7 @@ class IntervalMenuActionTest extends TestCase {
         $menu = $this->createMenu($insertedDate, 1000, 'Test menu', array_keys($oneRestaurant)[0]);
         $this->insertMenus([$menu]);
 
-        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval',null, "from=$from&to=$to");
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu',null, "from=$from&to=$to");
         $this->assertEquals(200, $response->getStatusCode());
 
         $this->assertNotContains($insertedDate, (string) $response->getBody());
@@ -127,7 +127,7 @@ class IntervalMenuActionTest extends TestCase {
         list($from, $to) = array('20180303', 'date');
         $restaurants = RestaurantCatalog::getAll();
 
-        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval',null, "from=$from&to=$to");
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu',null, "from=$from&to=$to");
         $this->assertEquals(400, $response->getStatusCode());
 
         $this->responseNotContainsRestaurantData($response, $restaurants);
@@ -147,7 +147,7 @@ class IntervalMenuActionTest extends TestCase {
         $menus = $this->createMenusFromDateAndRestaurantKeys(date('Y-m-d'), array_keys($firstHalf));
         $this->insertMenus($menus);
 
-        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval');
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu');
         $this->assertEquals(200, $response->getStatusCode());
 
         $this->responseContainsRestaurantData($response, $firstHalf);

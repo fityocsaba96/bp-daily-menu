@@ -6,6 +6,7 @@ use BpDailyMenu\AppBuilder;
 use BpDailyMenu\Dao\DailyMenuDao;
 use BpDailyMenu\PDOFactory;
 use BpDailyMenu\RestaurantCatalog;
+use BpDailyMenu\Validator\DateIntervalValidator;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -35,20 +36,6 @@ class IntervalMenuActionTest extends TestCase {
     protected function setUp(): void {
         self::$pdo->query('TRUNCATE TABLE daily_menu');
     }
-
-//    /**
-//     * @test
-//     */
-//    public function invoke_givenFromAndToDates_containsAllDatesBetweenFromAndToDates() {
-//        list($from, $to) = array('2018-01-01', '2018-01-10');
-//        $interval = $this->generateInterval($from, $to);
-//
-//        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval', null, "from=$from&to=$to");
-//        $this->assertEquals(200, $response->getStatusCode());
-//        foreach ($interval as $date) {
-//            $this->assertContains($date->format('Y-m-d'), (string) $response->getBody());
-//        }
-//    }
 
     /**
      * @test
@@ -131,6 +118,21 @@ class IntervalMenuActionTest extends TestCase {
         $this->assertNotContains($insertedDate, (string) $response->getBody());
         $this->responseNotContainsMenuData($response, [$menu]);
         $this->responseNotContainsRestaurantData($response, $oneRestaurant);
+    }
+
+    /**
+     * @test
+     */
+    public function invoke_givenInvalidDates_containsError() {
+        list($from, $to) = array('20180303', 'date');
+        $restaurants = RestaurantCatalog::getAll();
+
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval',null, "from=$from&to=$to");
+        $this->assertEquals(400, $response->getStatusCode());
+
+        $this->responseNotContainsRestaurantData($response, $restaurants);
+        $error = (new DateIntervalValidator)($from, $to);
+        $this->assertContains($error, (string) $response->getBody());
     }
 
     private function generateInterval(string $from, string $to): DatePeriod {

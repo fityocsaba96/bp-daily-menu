@@ -35,21 +35,22 @@ class IntervalMenuAction {
     }
 
     private function renderToday(Response $response): ResponseInterface {
-        return $this->renderMenus($response, $this->dao->getDailyMenu());
+        return $this->renderMenus($response, $this->dao->getDailyMenu(), false);
     }
 
     private function renderInterval(Response $response, string $from, string $to): ResponseInterface {
         $error = (new DateIntervalValidator)($from, $to);
         if (!$error)
-            return $this->renderMenus($response, $this->dao->getMenusBetweenInterval($from, $to));
+            return $this->renderMenus($response, $this->dao->getMenusBetweenInterval($from, $to), true);
         else
             return $response->write($error)->withStatus(400);
     }
 
-    private function renderMenus(Response $response, array $menus): ResponseInterface {
+    private function renderMenus(Response $response, array $menus, bool $fillForm): ResponseInterface {
         return $this->view->render($response, 'interval_menu.html.twig', [
             'restaurants' => RestaurantCatalog::getAll(),
-            'menus_of_interval' => $this->explodeMenusByNewLine($menus)
+            'menus_of_interval' => $this->explodeMenusByNewLine($menus),
+            'fill_form' => $fillForm
         ]);
     }
 

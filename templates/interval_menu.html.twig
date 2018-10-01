@@ -1,7 +1,7 @@
 <h1>Budapest daily menu</h1>
 <form action="" method="get">
-    <input name="from" type="text" placeholder="From" value="{{ menus_of_interval|keys|first }}">
-    <input name="to" type="text" placeholder="To" value="{{ menus_of_interval|keys|last }}">
+    <input name="from" type="text" placeholder="From"{% if fill_form %} value="{{ menus_of_interval|keys|first }}"{% endif %}>
+    <input name="to" type="text" placeholder="To"{% if fill_form %} value="{{ menus_of_interval|keys|last }}"{% endif %}>
     <input type="submit" value="Show">
 </form>
 {% for date, menus in menus_of_interval %}

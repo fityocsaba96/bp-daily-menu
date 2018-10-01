@@ -77,7 +77,6 @@ class IntervalMenuActionTest extends TestCase {
             $this->insertMenus($menus);
             $intervalMenus[] = $menus;
         }
-        var_dump(self::$dao->getMenusBetweenInterval($from, $to));
 
         $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval',null, "from=$from&to=$to");
         $this->assertEquals(200, $response->getStatusCode());
@@ -86,6 +85,52 @@ class IntervalMenuActionTest extends TestCase {
         foreach ($intervalMenus as $menus) {
             $this->responseContainsMenuData($response, $menus);
         }
+    }
+
+    /**
+     * @test
+     */
+    public function invoke_thereIsMenuForSomeDaysOfGivenInterval_containsDateOnlyForDaysWhenThereIsMenuAndRestaurantDataAndMenuForOnlyRestaurantsThatHasMenu() {
+        list($from, $to) = array('2018-03-03', '2018-03-04');
+
+        $restaurants = RestaurantCatalog::getAll();
+        $this->assertGreaterThan(1, count($restaurants));
+        $oneRestaurant = array_slice($restaurants, 0, 1);
+        $restRestaurants = array_slice($restaurants, 1);
+
+        $menu = $this->createMenu($from, 1000, 'Test menu', array_keys($oneRestaurant)[0]);
+        $this->insertMenus([$menu]);
+
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval',null, "from=$from&to=$to");
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->assertContains($from, (string) $response->getBody());
+        $this->assertNotContains($to, (string) $response->getBody());
+
+        $this->responseContainsRestaurantData($response, $oneRestaurant);
+        $this->responseContainsMenuData($response, [$menu]);
+        $this->responseNotContainsRestaurantData($response, $restRestaurants);
+    }
+
+    /**
+     * @test
+     */
+    public function invoke_thereIsMenuOutsideGivenInterval_notContainsMenuOutside() {
+        list($from, $to) = array('2018-03-03', '2018-03-04');
+
+        $restaurants = RestaurantCatalog::getAll();
+        $oneRestaurant = array_slice($restaurants, 0, 1);
+
+        $insertedDate = '2018-03-02';
+        $menu = $this->createMenu($insertedDate, 1000, 'Test menu', array_keys($oneRestaurant)[0]);
+        $this->insertMenus([$menu]);
+
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval',null, "from=$from&to=$to");
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->assertNotContains($insertedDate, (string) $response->getBody());
+        $this->responseNotContainsMenuData($response, [$menu]);
+        $this->responseNotContainsRestaurantData($response, $oneRestaurant);
     }
 
     private function generateInterval(string $from, string $to): DatePeriod {
@@ -116,17 +161,28 @@ class IntervalMenuActionTest extends TestCase {
         }
     }
 
+    private function responseNotContainsMenuData(ResponseInterface $response, array $menus) {
+        foreach ($menus as $menu) {
+            $this->assertNotContains((string) $menu['price'], (string) $response->getBody());
+            $this->assertNotContains($menu['menu'], (string) $response->getBody());
+        }
+    }
+
     private function createMenusFromDateAndRestaurantKeys(string $date, array $restaurantKeys): array {
         $menus = [];
         for ($i = 0; $i < count($restaurantKeys); $i++) {
-            $menus[] = [
-                'date' => $date,
-                'price' => 1000 + $i,
-                'menu' => "Test menu $date $i",
-                'restaurant' => $restaurantKeys[$i]
-            ];
+            $menus[] = $this->createMenu($date, 1000 + $i, "Test menu $date $i", $restaurantKeys[$i]);
         }
         return $menus;
+    }
+
+    private function createMenu(string $date, int $price, string $menu, string $restaurant): array {
+        return [
+            'date' => $date,
+            'price' => $price,
+            'menu' => $menu,
+            'restaurant' => $restaurant
+        ];
     }
 
     private function insertMenus(array $menus) {

@@ -14,7 +14,7 @@ class HealthDaoTest extends TestCase {
     public function getDatabaseName_databaseIsSelected_returnsDbName() {
         $healthDao = new HealthCheckDao((new PDOFactory())->createWithDBName());
         $selectedDb = $healthDao->getDatabaseName();
-        $this->assertEquals('bp_daily_menu_test', $selectedDb);
+        $this->assertNotNull($selectedDb);
     }
 
     /**

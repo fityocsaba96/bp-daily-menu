@@ -13,9 +13,9 @@ class EnvLoaderTest extends TestCase {
     public function invoke_loadsEnvVarsBasedOnApplicationEnv() {
         $envLoader = new EnvLoader();
         $envLoader();
-        $this->assertEquals('bp_daily_menu_test', getenv('DB_NAME'));
-        $this->assertEquals('academy', getenv('DB_USER'));
-        $this->assertEquals('academy', getenv('DB_PASS'));
+        $this->assertNotFalse(getenv('DB_NAME'));
+        $this->assertNotFalse(getenv('DB_USER'));
+        $this->assertNotFalse(getenv('DB_PASS'));
     }
 
     /**
@@ -23,7 +23,11 @@ class EnvLoaderTest extends TestCase {
      */
     public function invoke_envFileNotExists_doesntLoadEnvVars() {
         $envLoader = new EnvLoader();
+        $dbName = getenv('DB_NAME');
+        putenv('DB_NAME');
+        $this->assertFalse(getenv('DB_NAME'));
         $envLoader('production');
-        $this->expectNotToPerformAssertions();
+        $this->assertFalse(getenv('DB_NAME'));
+        putenv("DB_NAME=$dbName");
     }
 }

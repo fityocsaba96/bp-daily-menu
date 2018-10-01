@@ -28,15 +28,29 @@ class IntervalMenuAction {
 
     public function __invoke(Request $request, Response $response): ResponseInterface {
         list($from, $to) = array($request->getQueryParam('from'), $request->getQueryParam('to'));
+        if (!$from || !$to)
+            return $this->renderToday($response);
+        else
+            return $this->renderInterval($response, $from, $to);
+    }
+
+    private function renderToday(Response $response): ResponseInterface {
+        return $this->renderMenus($response, $this->dao->getDailyMenu());
+    }
+
+    private function renderInterval(Response $response, string $from, string $to): ResponseInterface {
         $error = (new DateIntervalValidator)($from, $to);
-        if (!$error) {
-            return $this->view->render($response, 'interval_menu.html.twig', [
-                'restaurants' => RestaurantCatalog::getAll(),
-                'menus_of_interval' => $this->explodeMenusByNewLine($this->dao->getMenusBetweenInterval($from, $to))
-            ]);
-        } else {
+        if (!$error)
+            return $this->renderMenus($response, $this->dao->getMenusBetweenInterval($from, $to));
+        else
             return $response->write($error)->withStatus(400);
-        }
+    }
+
+    private function renderMenus(Response $response, array $menus): ResponseInterface {
+        return $this->view->render($response, 'interval_menu.html.twig', [
+            'restaurants' => RestaurantCatalog::getAll(),
+            'menus_of_interval' => $this->explodeMenusByNewLine($menus)
+        ]);
     }
 
     private function explodeMenusByNewLine(array $menusOfInterval): array {

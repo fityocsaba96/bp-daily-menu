@@ -135,6 +135,26 @@ class IntervalMenuActionTest extends TestCase {
         $this->assertContains($error, (string) $response->getBody());
     }
 
+    /**
+     * @test
+     */
+    public function invoke_notGivenDates_containsDailyMenu() {
+        $restaurants = RestaurantCatalog::getAll();
+        $this->assertGreaterThan(1, count($restaurants));
+        $firstHalf = array_slice($restaurants, 0, count($restaurants) / 2);
+        $secondHalf = array_slice($restaurants, count($restaurants) / 2);
+
+        $menus = $this->createMenusFromDateAndRestaurantKeys(date('Y-m-d'), array_keys($firstHalf));
+        $this->insertMenus($menus);
+
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu/interval');
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->responseContainsRestaurantData($response, $firstHalf);
+        $this->responseContainsMenuData($response, $menus);
+        $this->responseNotContainsRestaurantData($response, $secondHalf);
+    }
+
     private function generateInterval(string $from, string $to): DatePeriod {
         $fromDate = new DateTime($from);
         $toDate = new DateTime($to);

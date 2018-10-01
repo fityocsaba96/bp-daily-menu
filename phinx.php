@@ -40,9 +40,9 @@ return [
     'environments' => [
         'default_migration_table' => 'phinxlog',
         'default_database' => 'development',
-        'development' => $developmentConfig,
-        'test' => $testConfig,
-        'codeship' => $codeshipConfig
+        'development' => $developmentConfig ?? [],
+        'test' => $testConfig ?? [],
+        'codeship' => $codeshipConfig ?? []
     ],
     'version_order' => 'creation'
 ];

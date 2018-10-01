@@ -28,7 +28,7 @@ class IntervalMenuAction {
 
     public function __invoke(Request $request, Response $response): ResponseInterface {
         list($from, $to) = array($request->getQueryParam('from'), $request->getQueryParam('to'));
-        if (!$from || !$to)
+        if (!$from && !$to)
             return $this->renderToday($response);
         else
             return $this->renderInterval($response, $from, $to);

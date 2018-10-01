@@ -4,7 +4,6 @@ namespace BpDailyMenu;
 
 use BpDailyMenu\Action\HealthCheckAction;
 use BpDailyMenu\Action\IntervalMenuAction;
-use BpDailyMenu\Action\TodaysMenuAction;
 use BpDailyMenu\Dao\DailyMenuDao;
 use BpDailyMenu\Dao\HealthCheckDao;
 use PDO;
@@ -57,7 +56,6 @@ class AppBuilder {
 
     private function setupRoutes(): void {
         $this->app->get('/healthcheck', HealthCheckAction::class);
-        $this->app->get('/menu/today', TodaysMenuAction::class);
         $this->app->get('/menu/interval', IntervalMenuAction::class);
     }
 
@@ -74,10 +72,6 @@ class AppBuilder {
     private function setupDependencies(): void {
         $this->container[HealthCheckAction::class] = function ($container) {
             return new HealthCheckAction($container[HealthCheckDao::class], $container[Twig::class]);
-        };
-
-        $this->container[TodaysMenuAction::class] = function ($container) {
-            return new TodaysMenuAction($container[DailyMenuDao::class], $container[Twig::class]);
         };
 
         $this->container[IntervalMenuAction::class] = function ($container) {

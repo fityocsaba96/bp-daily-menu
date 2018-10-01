@@ -9,7 +9,12 @@ function loadConfig(string $env): array {
     (new EnvLoader)($env);
     $pdo = (new PDOFactory)->createWithoutDbName();
     $pdo->query('CREATE DATABASE IF NOT EXISTS ' . getenv('DB_NAME'));
-    $config = [
+    $config = getConfigFromEnv();
+    return $config;
+}
+
+function getConfigFromEnv(): array {
+    return [
         'adapter' => 'mysql',
         'host' => getenv('DB_HOST'),
         'name' => getenv('DB_NAME'),
@@ -18,11 +23,14 @@ function loadConfig(string $env): array {
         'port' => '3306',
         'charset' => 'utf8',
     ];
-    return $config;
 }
 
-$developmentConfig = loadConfig('development');
-$testConfig = loadConfig('test');
+if (getenv('APPLICATION_ENV')) {
+    $developmentConfig = loadConfig('development');
+    $testConfig = loadConfig('test');
+} else {
+    $codeshipConfig = getConfigFromEnv();
+}
 
 return [
     'paths' => [
@@ -33,7 +41,8 @@ return [
         'default_migration_table' => 'phinxlog',
         'default_database' => 'development',
         'development' => $developmentConfig,
-        'test' => $testConfig
+        'test' => $testConfig,
+        'codeship' => $codeshipConfig
     ],
     'version_order' => 'creation'
 ];

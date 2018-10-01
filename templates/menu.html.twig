@@ -7,9 +7,9 @@
 {% for date, menus in menus_of_interval %}
     <h2>{{ date }}</h2>
     {% for menu in menus %}
-        <a href="{{ restaurants[menu.restaurant].map_url }}">
-            <h3>{{ restaurants[menu.restaurant].name }}</h3>
-        </a>
+        <h3>
+            <a href="{{ restaurants[menu.restaurant].map_url }}">{{ restaurants[menu.restaurant].name }}</a>
+        </h3>
         <p>
             <strong>{{ menu.price }} Ft</strong><br>
             {% for menu_item in menu.menu %}

@@ -13,5 +13,13 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^7.3"
+    },
+    "scripts": {
+        "migrate": "vendor/bin/phinx migrate -e codeship",
+        "seed": "vendor/bin/phinx seed:run -e codeship",
+        "post-install-cmd": [
+            "@migrate",
+            "@seed"
+        ]
     }
 }

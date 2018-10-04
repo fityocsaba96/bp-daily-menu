@@ -42,7 +42,7 @@ class DailyMenuDaoTest extends TestCase {
         $date = date('Y-m-d');
         $menus = $this->createMenusFromDates([$date]);
         $this->saveDailyMenus($menus);
-        $this->assertEquals($this->arrayGroupBy('date', $menus), self::$dao->getDailyMenu());
+        $this->assertEquals($menus, self::$dao->getDailyMenu());
     }
 
     /**
@@ -51,7 +51,7 @@ class DailyMenuDaoTest extends TestCase {
     public function getDailyMenu_thereIsMenuForTodayAndAnotherDay_returnsMenuForToday() {
         $menus = $this->createMenusFromDates([date('Y-m-d'), (new DateTime('tomorrow'))->format('Y-m-d')]);
         $this->saveDailyMenus($menus);
-        $this->assertEquals($this->arrayGroupBy('date', [$menus[0]]), self::$dao->getDailyMenu());
+        $this->assertEquals([$menus[0]], self::$dao->getDailyMenu());
     }
 
     /**
@@ -67,7 +67,7 @@ class DailyMenuDaoTest extends TestCase {
     public function getMenusBetweenInterval_thereIsMenuInInterval_returnsArrayContainingTheMenu() {
         $menus = $this->createMenusFromDates(['2018-01-12']);
         $this->saveDailyMenus($menus);
-        $this->assertEquals($this->arrayGroupBy('date', $menus), self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
+        $this->assertEquals($menus, self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
     }
 
     /**
@@ -76,7 +76,7 @@ class DailyMenuDaoTest extends TestCase {
     public function getMenusBetweenInterval_thereAreMenusInInterval_returnsArrayContainingTheMenus() {
         $menus = $this->createMenusFromDates(['2018-01-12', '2018-01-13']);
         $this->saveDailyMenus($menus);
-        $this->assertEquals($this->arrayGroupBy('date', $menus), self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
+        $this->assertEquals($menus, self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
     }
 
     /**
@@ -87,7 +87,7 @@ class DailyMenuDaoTest extends TestCase {
         $this->saveDailyMenus($menusInInterval);
         $menusNotInInterval = $this->createMenusFromDates(['2019-01-12', '2019-01-13']);
         $this->saveDailyMenus($menusNotInInterval);
-        $this->assertEquals($this->arrayGroupBy('date', $menusInInterval), self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
+        $this->assertEquals($menusInInterval, self::$dao->getMenusBetweenInterval('2018-01-12', '2018-01-13'));
     }
 
     private function saveDailyMenus($menus): void {
@@ -108,15 +108,5 @@ class DailyMenuDaoTest extends TestCase {
             ];
         }
         return $menus;
-    }
-
-    private function arrayGroupBy($key, array $array): array {
-        $result = [];
-        foreach ($array as $value) {
-            $groupKey = $value[$key];
-            unset($value[$key]);
-            $result[$groupKey][] = $value;
-        }
-        return $result;
     }
 }

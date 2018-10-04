@@ -1,20 +1,22 @@
 <h1>Budapest daily menu</h1>
 <form action="" method="get">
-    <input name="from" type="text" placeholder="From"{% if fill_form %} value="{{ menus_of_interval|keys|first }}"{% endif %}>
-    <input name="to" type="text" placeholder="To"{% if fill_form %} value="{{ menus_of_interval|keys|last }}"{% endif %}>
+    <input name="from" type="text" placeholder="From"{% if fill_form %} value="{{ menus_of_dates|keys|first }}"{% endif %}>
+    <input name="to" type="text" placeholder="To"{% if fill_form %} value="{{ menus_of_dates|keys|last }}"{% endif %}>
     <input type="submit" value="Show">
 </form>
-{% for date, menus in menus_of_interval %}
+{% for date, menus_of_restaurants in menus_of_dates %}
     <h2>{{ date }}</h2>
-    {% for menu in menus %}
+    {% for restaurant, menus in menus_of_restaurants %}
         <h3>
-            <a href="{{ restaurants[menu.restaurant].map_url }}">{{ restaurants[menu.restaurant].name }}</a>
+            <a href="{{ restaurants[restaurant].map_url }}">{{ restaurants[restaurant].name }}</a>
         </h3>
-        <p>
-            <strong>{{ menu.price }} Ft</strong><br>
-            {% for menu_item in menu.menu %}
-                {{ menu_item }}<br>
-            {% endfor %}
-        </p>
+        {% for menu in menus %}
+            <p>
+                <strong>{{ menu.price }} Ft</strong><br>
+                {% for menu_item in menu.menu %}
+                    {{ menu_item }}<br>
+                {% endfor %}
+            </p>
+        {% endfor %}
     {% endfor %}
 {% endfor %}

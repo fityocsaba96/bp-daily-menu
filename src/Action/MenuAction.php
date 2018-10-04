@@ -35,14 +35,14 @@ class MenuAction {
     }
 
     private function renderToday(Response $response): ResponseInterface {
-        $menus = $this->groupMenusByDate($this->dao->getDailyMenu());
+        $menus = $this->groupMenusByDateAndRestaurant($this->dao->getDailyMenu());
         return $this->renderMenus($response, $menus, false);
     }
 
     private function renderInterval(Response $response, string $from, string $to): ResponseInterface {
         $error = (new DateIntervalValidator)($from, $to);
         if (!$error) {
-            $menus = $this->groupMenusByDate($this->dao->getMenusBetweenInterval($from, $to));
+            $menus = $this->groupMenusByDateAndRestaurant($this->dao->getMenusBetweenInterval($from, $to));
             return $this->renderMenus($response, $menus, true);
         } else
             return $response->write($error)->withStatus(400);
@@ -51,27 +51,29 @@ class MenuAction {
     private function renderMenus(Response $response, array $menus, bool $fillForm): ResponseInterface {
         return $this->view->render($response, 'menu.html.twig', [
             'restaurants' => RestaurantCatalog::getAll(),
-            'menus_of_interval' => $this->explodeMenusByNewLine($menus),
+            'menus_of_dates' => $this->explodeMenusByNewLine($menus),
             'fill_form' => $fillForm
         ]);
     }
 
-    private function groupMenusByDate(array $menus): array {
+    private function groupMenusByDateAndRestaurant(array $menus): array {
         $groupedMenus = [];
         foreach ($menus as $menu) {
-            $date = $menu['date'];
-            unset($menu['date']);
-            $groupedMenus[$date][] = $menu;
+            list($date, $restaurant) = [$menu['date'], $menu['restaurant']];
+            unset($menu['date'], $menu['restaurant']);
+            $groupedMenus[$date][$restaurant][] = $menu;
         }
         return $groupedMenus;
     }
 
-    private function explodeMenusByNewLine(array $menusOfInterval): array {
-        foreach ($menusOfInterval as &$menus) {
-            foreach ($menus as &$menu) {
-                $menu['menu'] = explode(PHP_EOL, $menu['menu']);
+    private function explodeMenusByNewLine(array $menusOfDates): array {
+        foreach ($menusOfDates as &$menusOfRestaurants) {
+            foreach ($menusOfRestaurants as &$menus) {
+                foreach ($menus as &$menu) {
+                    $menu['menu'] = explode(PHP_EOL, $menu['menu']);
+                }
             }
         }
-        return $menusOfInterval;
+        return $menusOfDates;
     }
 }

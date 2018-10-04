@@ -155,6 +155,30 @@ class MenuActionTest extends TestCase {
         $this->responseNotContainsRestaurantData($response, $secondHalf);
     }
 
+    /**
+     * @test
+     */
+    public function invoke_thereAreMultipleMenusForSameDayAndRestaurant_containsAllTheseMenusAndContainsRestaurantDataOnlyOnce() {
+        $restaurants = RestaurantCatalog::getAll();
+        $this->assertGreaterThan(0, count($restaurants));
+        $date = '2018-03-03';
+        $restaurant = array_keys($restaurants)[0];
+
+        $menus = [];
+        for ($i = 0; $i < 3; $i++)
+            $menus[] = $this->createMenu($date, 1234 + $i, "Test menu $i", $restaurant);
+        $this->insertMenus($menus);
+
+        $response = $this->runApp((new AppBuilder)(), 'GET', '/menu',null, "from=$date&to=$date");
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->responseContainsMenuData($response, $menus);
+        $countOfRestaurantName = substr_count((string) $response->getBody(), $restaurants[$restaurant]['name']);
+        $this->assertEquals(1, $countOfRestaurantName);
+        $countOfRestaurantMapUrl = substr_count((string) $response->getBody(), $restaurants[$restaurant]['map_url']);
+        $this->assertEquals(1, $countOfRestaurantMapUrl);
+    }
+
     private function generateInterval(string $from, string $to): DatePeriod {
         $fromDate = new DateTime($from);
         $toDate = new DateTime($to);

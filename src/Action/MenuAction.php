@@ -57,7 +57,7 @@ class MenuAction {
     private function explodeMenusByNewLine(array $menusOfInterval): array {
         foreach ($menusOfInterval as &$menus) {
             foreach ($menus as &$menu) {
-                $menu['menu'] = explode("\n", $menu['menu']);
+                $menu['menu'] = explode(PHP_EOL, $menu['menu']);
             }
         }
         return $menusOfInterval;

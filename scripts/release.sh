@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-echo "RELEASE_COMMAND_STATUS=1"
+echo "RELEASE_COMMAND_STATUS=0"
 
